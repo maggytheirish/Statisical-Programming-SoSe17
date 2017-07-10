@@ -1,6 +1,21 @@
 # This script creates new features and splits the dataset for training and testing
 train = readRDS("train")  # Load the clean dataset
 
+# Create a function to load the packages
+LoadPackages = function(p){
+  
+  for(i in seq_along(p)) {
+    if(!require(p[i], character.only=TRUE)) {
+      install.packages(p[i])}
+      library(p[i], character.only=TRUE)
+  }
+
+}
+list.of.packages = c("rpart","lubridate","outliers","rpart.plot", "xgboost",
+                      "caret","caretEnsemble", "randomForest","e1071","pROC", "tidyr", "klaR", 
+                      "car","devtools","yamldebugger","mlbench","Hmisc", "ggvis","relaimpo")
+sapply(list.of.packages,LoadPackages)
+
 # Create an extra date varible for future application
 train$NewDate = train$Date
 
@@ -10,7 +25,8 @@ train$Promo2SinceWeek = NULL  # deleting redundant columns
 train$Promo2SinceYear = NULL
 
 # Creating a starting date for Competition (assuming it's from the first day of the month)
-train$CompetitionSinceDate = as.Date(paste(train$CompetitionOpenSinceYear, train$CompetitionOpenSinceMonth, 1, sep="-"),format="%Y-%m-%d")
+train$CompetitionSinceDate = as.Date(paste(train$CompetitionOpenSinceYear, train$CompetitionOpenSinceMonth, 
+    1, sep = "-"), format = "%Y-%m-%d")
 train$CompetitionOpenSinceYear = NULL  # deleting redundant columns
 train$CompetitionOpenSinceMonth = NULL
 
@@ -18,8 +34,7 @@ train$CompetitionOpenSinceMonth = NULL
 CompetitionDateMissing = train[is.na(train$CompetitionSinceDate), ]
 CompetitionDateMissing = CompetitionDateMissing[!is.na(CompetitionDateMissing$CompetitionDistance), ]
 CompetitionDateMissing$CompetitionSinceDate = CompetitionDateMissing$Date  # replacing NAs with the current date
-train[is.na(train$CompetitionSinceDate) & !is.na(train$CompetitionDistance),"CompetitionSinceDate"]
-     =CompetitionDateMissing$CompetitionSinceDate
+train[is.na(train$CompetitionSinceDate) & !is.na(train$CompetitionDistance), "CompetitionSinceDate"] = CompetitionDateMissing$CompetitionSinceDate
 train$CompetitionSinceDate = as.Date(train$CompetitionSinceDate)
 
 # Create a new binary variable StoreAssortmentMatch
@@ -30,15 +45,16 @@ train$StoreAssortmentMatch = as.factor(train$StoreAssortmentMatch)
 
 # Create a dummy variable for whether competition is present on a given day
 train$Date = as.Date(train$Date)
-train$CompetitionPresent = ifelse(train$Date<train$CompetitionSinceDate,0,1)
+train$CompetitionPresent = ifelse(train$Date < train$CompetitionSinceDate, 0, 1)
 train$CompetitionPresent = as.factor(train$CompetitionPresent)
-train$CompetitionPresent = factor(train$CompetitionPresent, levels=c(levels(train$CompetitionPresent), "missing"))
+train$CompetitionPresent = factor(train$CompetitionPresent, levels = c(levels(train$CompetitionPresent), 
+    "missing"))
 form_na = is.na(train$CompetitionPresent)
-train[form_na,"CompetitionPresent"] = "missing"
+train[form_na, "CompetitionPresent"] = "missing"
 
 # Create a new binary variable indicating if both types of holidays take place on a given day
 train$StateHoliday = as.character(train$StateHoliday)
-train$BothHolidays = ifelse(train$StateHoliday==train$SchoolHoliday,1,0)
+train$BothHolidays = ifelse(train$StateHoliday == train$SchoolHoliday, 1, 0)
 train$StateHoliday = as.factor(train$StateHoliday)
 train$BothHolidays = as.factor(train$BothHolidays)
 
@@ -46,43 +62,48 @@ train$BothHolidays = as.factor(train$BothHolidays)
 train$CompetitionDistance[is.na(train$CompetitionDistance)] = mean(train$CompetitionDistance, na.rm = TRUE)
 train$CompetitionSinceDate[is.na(train$CompetitionSinceDate)] = mean(train$CompetitionSinceDate, na.rm = TRUE)
 train$Promo2SinceDate[is.na(train$Promo2SinceDate)] = mean(train$Promo2SinceDate, na.rm = TRUE)
-summary(train)   
+summary(train)
 
 # Creating separate test set where sales need to be predicted
-train$NewDate = as.Date(paste(train$NewDate,sep="-"),format= "%Y-%m-%d")
-testdate = train$NewDate>="2015-07-20"  # Selecting the last 10 days for forecasting
-newdata.set = train[testdate==T, ]
-train = train[testdate==F, ]  # remove test observations
+train$NewDate = as.Date(paste(train$NewDate, sep = "-"), format = "%Y-%m-%d")
+testdate = train$NewDate >= "2015-07-20"  # Selecting the last 10 days for forecasting
+newdata.set = train[testdate == T, ]
+train = train[testdate == F, ]  # remove test observations
 newdata.set$NewDate = NULL
 
 # Adding features with mean sales 
-
 train$Store = as.factor(train$Store)
-train$Date = as.Date(paste(train$Date,sep="-"),format= "%Y-%m-%d")
-train = separate(train, Date, into = c("Year", "Month","Day"), sep="-")  #splitting the date into separate colums
+train$Date = as.Date(paste(train$Date, sep = "-"), format = "%Y-%m-%d")
+train = separate(train, Date, into = c("Year", "Month", "Day"), sep = "-")  #splitting the date into separate colums
 
-features.avg = setNames(aggregate(train$Sales, list(train$Store), mean),c("Store","AvgSalesPerStore"))
-features.avg$AvgVisitsPerStore = aggregate(train$Customers, list(train$Store), mean)[,2]
+features.avg = setNames(aggregate(train$Sales, list(train$Store), mean), c("Store", "AvgSalesPerStore"))
+features.avg$AvgVisitsPerStore = aggregate(train$Customers, list(train$Store), mean)[, 2]
 
-features.dow = setNames(aggregate(train$Sales, list(train$Store,train$DayOfWeek), mean),c("Store","DayOfWeek","AvgSalesPerStorePerDayOfWeek"))
-features.dow$AvgVisitsPerStorePerDayOfWeek = aggregate(train$Customers, list(train$Store,train$DayOfWeek), mean)[,3]
+features.dow = setNames(aggregate(train$Sales, list(train$Store, train$DayOfWeek), mean), c("Store", "DayOfWeek", 
+    "AvgSalesPerStorePerDayOfWeek"))
+features.dow$AvgVisitsPerStorePerDayOfWeek = aggregate(train$Customers, list(train$Store, train$DayOfWeek), 
+    mean)[, 3]
 
-features.year = setNames(aggregate(train$Sales, list(train$Store,train$Year), mean),c("Store","Year","AvgSalesPerStorePerYear"))
-features.year$AvgVisitsPerStorePerYear = aggregate(train$Customers, list(train$Store,train$Year), mean)[,3]
+features.year = setNames(aggregate(train$Sales, list(train$Store, train$Year), mean), c("Store", "Year", 
+    "AvgSalesPerStorePerYear"))
+features.year$AvgVisitsPerStorePerYear = aggregate(train$Customers, list(train$Store, train$Year), mean)[, 
+    3]
 
-features.mon = setNames(aggregate(train$Sales, list(train$Store,train$Year,train$Month), mean),c("Store","Year","Month","AvgSalesPerStorePerMonth"))
-features.mon$AvgVisitsPerStorePerMonth = aggregate(train$Customers, list(train$Store,train$Year,train$Month), mean)[,4]
+features.mon = setNames(aggregate(train$Sales, list(train$Store, train$Year, train$Month), mean), c("Store", 
+    "Year", "Month", "AvgSalesPerStorePerMonth"))
+features.mon$AvgVisitsPerStorePerMonth = aggregate(train$Customers, list(train$Store, train$Year, train$Month), 
+    mean)[, 4]
 
 #Merging new features with the dataset
-train = merge(train, features.avg, by="Store")
-train = merge(train, features.dow, by=c("Store","DayOfWeek"))
-train = merge(train, features.year, by=c("Store","Year"))
-train = merge(train, features.mon, by=c("Store","Year","Month"))
+train = merge(train, features.avg, by = "Store")
+train = merge(train, features.dow, by = c("Store", "DayOfWeek"))
+train = merge(train, features.year, by = c("Store", "Year"))
+train = merge(train, features.mon, by = c("Store", "Year", "Month"))
 
 # Creating train dataset
 train$NewDate = as.factor(train$NewDate)
 set.seed(123)
-idx = createDataPartition(train$NewDate, p=0.05, list = F)
+idx = createDataPartition(train$NewDate, p = 0.05, list = F)
 train.set = train[idx, ]
 train.set$NewDate = NULL
 
@@ -98,19 +119,16 @@ newdata.set$Customers = NULL
 train.set$Customers = NULL
 
 # Create testing and training subsets within the train set
-idx.test = createDataPartition(train.set$Sales,p=0.8,list=F)
+idx.test = createDataPartition(train.set$Sales, p = 0.8,list = F)
 train.final = train.set[idx.test, ]
 test.final = train.set[-idx.test, ]
 
 # Pre treatment - use this for modelling
-
-train.final[,c(7,21:28)] = scale(train.final[,c(7,21:28)])
-test.final[,c(7,21:28)] = scale(test.final[,c(7,21:28)])
-newdata.set[,sapply(newdata_set.v2,is.numeric)] = scale(newdata.set[,sapply(newdata.set,is.numeric)])
-
-
+train.final[, c(7, 21:28)] = scale(train.final[, c(7, 21:28)])
+test.final[, c(7, 21:28)] = scale(test.final[, c(7, 21:28)])
+newdata.set[, sapply(newdata_set.v2, is.numeric)] = scale(newdata.set[, sapply(newdata.set,is.numeric)])
 
 # Saving datasets
-saveRDS(train.final,"train")
-saveRDS(test.final,"test")
-saveRDS(newdata.set,"class")
+saveRDS(train.final, "train")
+saveRDS(test.final, "test")
+saveRDS(newdata.set, "class")
