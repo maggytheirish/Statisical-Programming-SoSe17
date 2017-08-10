@@ -10,6 +10,6 @@ Keywords:         feature engineering, data mining,  time varying , forecast, ti
 
 Author:           Margarita Kostina, Jayalakshmi Choodamani, Camille Remigereau
 
-Submitted:        Wednesday, July 12 2017 by Margarita Kostina
+Submitted:        Thursday, August 10 2017 by Margarita Kostina
   
-Datafile:         train.rds
+Datafile:         train.csv, class.csv
