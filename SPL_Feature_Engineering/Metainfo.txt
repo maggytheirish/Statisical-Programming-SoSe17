@@ -12,4 +12,4 @@ Author:           Margarita Kostina, Jayalakshmi Choodamani, Camille Remigereau
 
 Submitted:        Wednesday, July 12 2017 by Margarita Kostina
   
-Datafile:         train.rds
+Datafile:         store.csv, train.csv
