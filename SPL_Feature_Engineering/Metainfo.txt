@@ -1,10 +1,11 @@
 
-Name of Quantlet: SPL_Feature_Engineering
+Name of Quantlet: SPL_Data_Cleaning_and_Feature_Engineering
  
 Published in:     Statistical programming languages - Student Project on ''Predicting Sales Using Machine Learning''
   
-Description:      Generates new features and splits the dataset into a training set and a holdout set for testing
- 
+Description:      Cleans the dataset, generates new features and splits the dataset into a training set and a holdout set for 
+                  testing
+                  
 Keywords:         feature engineering, data mining,  time varying , forecast, time-series, scaling, data adjustment
 
 Author:           Margarita Kostina, Jayalakshmi Choodamani, Camille Remigereau
