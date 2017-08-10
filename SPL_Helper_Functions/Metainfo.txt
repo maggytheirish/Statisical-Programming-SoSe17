@@ -1,1 +1,13 @@
+Name of Quantlet: SPL_Helper_Functions
+ 
+Published in:     Statistical programming languages - Student Project on ''Predicting Sales Using Machine Learning''
+  
+Description:      
+                  
+Keywords:         
 
+Author:           Margarita Kostina, Jayalakshmi Choodamani, Camille Remigereau
+
+Submitted:        Thursday, August 10 2017 by Margarita Kostina
+  
+Datafile:        
