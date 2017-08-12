@@ -44,3 +44,24 @@ ggplot(train, aes(x = as.Date(NewDate), y = AvgSalesPerStorePerMonth)) + geom_sm
 ggplot(train, aes(x = as.Date(NewDate), y = AvgVisitsPerStorePerMonth)) + geom_smooth(size = 2) + 
     ggtitle("Average Customers Per Store Per Month over Time") + labs(x = "Date", 
     y = "Average Customers Per Store Per Month") + theme_bw()
+
+# Loading xgb model for further plotting
+xgb = readRDS("xgb")
+
+# Calculating partial dependence
+xgb.partialPlots = list()  # empty result list
+imp.var.xgb = c("Open", "CompetitionDistance", "Store", "Promo", "CompetitionSinceDate", "Date", "Promo2SinceDate", 
+    "StoreType", "Assortment", "Promo2", "DayOfWeek", "StoreAssortmentMatch")
+for (var in imp.var.xgb) {
+    message("Now calculating for variable ", var)
+    xgb.partialPlots[[var]] = do.call(partial, list(xgb, pred.var = var, type = "auto", plot = FALSE))
+}
+
+# Creating the partial dependence plots and saving as pdf
+par(mfrow = c(1, 2))
+for (var in names(xgb.partialPlots)) {
+    pdf(paste("PDP of Sales on", var, ".pdf"))
+    plot(x = xgb.partialPlots[[var]][, 1], y = xgb.partialPlots[[var]][, 2], type = "l", xlab = var, ylab = "Sales", 
+        ylim = c(0, 8000), main = paste("Partial dependence of Sales on", var), bg = "transparent", lwd = 2)
+    dev.off()
+}
