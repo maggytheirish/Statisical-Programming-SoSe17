@@ -1,17 +1,3 @@
-# Creating a function to load the packages
-LoadPackages = function(p){
-  
-  for(i in seq_along(p)) {
-    if(!require(p[i], character.only=TRUE)) {
-      install.packages(p[i])}
-      library(p[i], character.only=TRUE)
-  }
-
-}
-
-list.of.packages = c("zoo", "data.table", "ggplot2", "forecast", "caret")
-sapply(list.of.packages,LoadPackages)
-
 # Loading the full dataset
 train = readRDS("FullSet")
 
