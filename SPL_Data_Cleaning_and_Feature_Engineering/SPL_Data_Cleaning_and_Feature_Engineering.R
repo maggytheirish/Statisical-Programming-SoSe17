@@ -1,3 +1,10 @@
+# Load all required packages
+source("Helper_Functions.R")
+list.of.packages = c("rpart", "lubridate", "outliers", "rpart.plot", "xgboost", "caret", "caretEnsemble", "randomForest", 
+    "e1071", "pROC", "tidyr", "klaR", "car", "devtools", "yamldebugger", "mlbench", "Hmisc", "ggvis", "relaimpo", 
+    "formatR", "data.table", "zoo", "ggplot2", "forecast", "reshape2", "pdp")
+sapply(list.of.packages, load.packages)
+
 # Reading in original datasets
 store = read.csv("store.csv", header = T, sep = ",")  #the dataset containing supplemental information about the stores
 train = read.csv("train.csv", header = T, sep = ",")  #historical data including sales
