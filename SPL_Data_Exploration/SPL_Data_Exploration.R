@@ -60,7 +60,7 @@ for (var in imp.var.xgb) {
 # Creating the partial dependence plots and saving as pdf
 par(mfrow = c(1, 2))
 for (var in names(xgb.partialPlots)) {
-    pdf(paste("PDP of Sales on", var, ".pdf"))
+    png(paste("PDPSales",var,".png", sep = "_"))
     plot(x = xgb.partialPlots[[var]][, 1], y = xgb.partialPlots[[var]][, 2], type = "l", xlab = var, ylab = "Sales", 
         ylim = c(0, 8000), main = paste("Partial dependence of Sales on", var), bg = "transparent", lwd = 2)
     dev.off()
