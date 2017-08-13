@@ -7,7 +7,7 @@
 # This is a self designed custom wrapper that evaluates the predictive accuracy of both
 # classification and regression model. This is an 'interactive' function which takes inprocess
 # inputs from the user.  Function call example - evaluate(model= name of model,data = testing
-# dataset, actual = actual values for comparision) evaluate(lr,test,Predcictions_test$actual)
+# dataset, actual = actual values for comparision) evaluate(lr,test,Predictions_test$actual)
 
 evaluate = function(model, data, actual) {
     
