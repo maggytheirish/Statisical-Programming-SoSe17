@@ -3,33 +3,34 @@
                      ### Data partitioning ###
 
 ##################################################################### 
+# Loading the dataset
+FullSet = readRDS("FullSet")
 
 # Creating separate test set where sales need to be predicted
-testdate = as.Date(train$Date) >= "2015-07-20"  # Selecting the last 10 days for forecasting
-test = train[testdate == T, ]
-train = train[testdate == F, ]  # remove test observations
+testdate = as.Date(FullSet$Date) >= "2015-07-20"  # Selecting the last 10 days for forecasting
+test = FullSet[testdate == T, ]
+FullSet = FullSet[testdate == F, ]  # remove test observations
 
-# Creating train dataset
+# Creating train dataset using 5 percent of the dataset for training
 set.seed(123)
-idx = createDataPartition(train$Date, p = 0.05, list = F)
-train_set = train[idx, ]
+idx = createDataPartition(FullSet$Date, p = 0.05, list = F)
+train = FullSet[idx, ]
 
 # Fix data type of the date
-train_set$Date = as.Date(train_set$Date)
+train$Date = as.Date(train$Date)
 test$Date = as.Date(test$Date)
 
-# creating file to store predictions
-
+# Creating file to store predictions
 Predictions_test = setNames(as.data.frame(test$Sales), "actual")
 Predictions_test$benchmark = mean(test$Sales)
 saveRDS(Predictions_test, "Predictions_test.RDS")
 
 # Remove the variable Sales that needs to be predicted from the testing dataset
 test$Sales = NULL
-# Remove the variable customers related to Sales from both traiing and testing datasets
+# Remove the variable Customers correlated with Sales from both training and testing datasets
 test$Customers = NULL
-train_set$Customers = NULL
+train$Customers = NULL
 
 # Saving datasets
-saveRDS(train_set, "train")
+saveRDS(train, "train")
 saveRDS(test, "test")
