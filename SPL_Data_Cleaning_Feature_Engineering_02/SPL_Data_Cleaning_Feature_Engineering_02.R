@@ -77,7 +77,5 @@ train[, factor.vars] = lapply(train[, factor.vars], factor)
 unused.vars = c("Promo2SinceWeek", "Promo2SinceYear", "CompetitionOpenSinceYear", "CompetitionOpenSinceMonth")
 train[, unused.vars] = NULL
 
-
-
 # Save a full dataset for data exploration use
 saveRDS(train, "FullSet")
