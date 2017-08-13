@@ -2,12 +2,10 @@ Name of Quantlet: SPL_Helper_Functions
  
 Published in:     Statistical programming languages - Student Project on ''Predicting Sales Using Machine Learning''
   
-Description:      Bulids functions assisting in running the models
+Description:      Bulids functions in oder to assist in running the models
                   
-Keywords:         
+Keywords:         statistics, summary, analysis, variable, data adjustment
 
 Author:           Margarita Kostina, Jayalakshmi Choodamani, Camille Remigereau
 
 Submitted:        Thursday, August 10 2017 by Margarita Kostina
-  
-Datafile:        
