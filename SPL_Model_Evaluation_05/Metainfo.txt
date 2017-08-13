@@ -4,7 +4,7 @@ Published in:     Statistical programming languages - Student Project on ''Predi
   
 Description:      Evaluates the predictive accuracy of both classification and regression models
  
-Keywords:         regression, model, cross-validation, classification, 
+Keywords:         regression, model, cross-validation, classification, function
 
 Author:           Margarita Kostina, Jayalakshmi Choodamani, Camille Remigereau
 
