@@ -1,4 +1,4 @@
-Name of Quantlet: SPL_Helper_Functions
+Name of Quantlet: SPL_Helper_Functions_01
  
 Published in:     Statistical programming languages - Student Project on ''Predicting Sales Using Machine Learning''
   
