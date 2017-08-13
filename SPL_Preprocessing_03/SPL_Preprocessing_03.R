@@ -4,7 +4,7 @@
 
 ##################################################################### 
 #Loading packages 
-if (!require("caret")) install.packages("caret")
+if (!require("caret")) install.packages("caret"); library("caret")
 
 # Loading the dataset
 FullSet = readRDS("FullSet")
