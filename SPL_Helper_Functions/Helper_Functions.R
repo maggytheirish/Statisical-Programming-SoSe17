@@ -29,7 +29,7 @@ load.multiple.files <- function(path, pattern) {
 
 # Function to save the predictions
 
-save_prediction <- function(modelname, modelresults, dataset) {
+save.prediction <- function(modelname, modelresults) {
     
     # Loading the datasets
     
