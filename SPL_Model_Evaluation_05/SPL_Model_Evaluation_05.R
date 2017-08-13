@@ -139,5 +139,18 @@ evaluate = function(model, data, actual) {
 
 # Run the models with optimal parameters
 lr.model = lm(Sales~.,train)
-lr.res = evaluate(lr.model,test,Prediction_test$actual)
+lr.res = evaluate(lr.model, test, Prediction_test$actual)
 save.predictions("lr.optimal", lr.res)
+
+nnet.model = nnet(Sales~.,train, decay = c(0, 10^seq(-3, 0, 1)), size = seq(3,4,5))
+nnet.res = evaluate(nnet.model, test, Prediction_test$actual)
+save.predictions("nnet.optimal", nnet.res)
+
+rf.model = rf(Sales~.,train, ntree = 500, mtry = 8)
+rf.res = evaluate(rf.model, test, Prediction_test$actual)
+save.predictions("rf.optimal", rf.res)
+
+xgboost.model = xgboost(Sales~.,train, nrounds = 400, max_depth = 10, eta = 0.05, gamma = 0, 
+                        colsample_bytree = 1, min_child_weight = 1, subsample = 0.6)
+xgboost.res = evaluate(xgboost.model, test, Prediction_test$actual)
+save.predictions("xgboost.optimal", xgboost.res)
