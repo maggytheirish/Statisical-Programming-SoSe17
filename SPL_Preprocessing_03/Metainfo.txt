@@ -1,10 +1,10 @@
-Name of Quantlet: SPL_Helper_Functions_01
+Name of Quantlet: SPL_Preprocessing_03
  
 Published in:     Statistical programming languages - Student Project on ''Predicting Sales Using Machine Learning''
   
-Description:      Bulids functions in oder to assist in running the models
+Description:      'Separates the dataset into two datasets for training and testing and creates a file for storing model predictions'
                   
-Keywords:         statistics, summary, analysis, variable, data adjustment
+Keywords:         partitioning, variable, data adjustment, transformation, function
 
 Author:           Margarita Kostina, Jayalakshmi Choodamani, Camille Remigereau
 
