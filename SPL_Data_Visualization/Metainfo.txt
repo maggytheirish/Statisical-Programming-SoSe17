@@ -1,4 +1,4 @@
-Name of Quantlet: SPL_Data_Exploration
+Name of Quantlet: SPL_Data_Visualization
  
 Published in:     Statistical programming languages - Student Project on ''Predicting Sales Using Machine Learning''
   
