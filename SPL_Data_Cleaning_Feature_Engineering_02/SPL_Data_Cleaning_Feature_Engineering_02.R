@@ -78,4 +78,4 @@ unused.vars = c("Promo2SinceWeek", "Promo2SinceYear", "CompetitionOpenSinceYear"
 train[, unused.vars] = NULL
 
 # Save a full dataset for data exploration use
-saveRDS(train, "FullSet")
+saveRDS(train, "FullSet.RDS")
