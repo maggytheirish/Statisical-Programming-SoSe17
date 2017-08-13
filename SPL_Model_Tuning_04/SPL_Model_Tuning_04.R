@@ -3,6 +3,25 @@
           ### Modelling Framework for Tuning models ###
 
 #################################################################### 
+# Function to save the predictions
+save.prediction = function(modelname, modelresults) {
+    
+    # Loading the datasets
+    Predictions_test = readRDS("Predictions_test.RDS")
+ 
+    # check if number of observations is equal and save results
+    if (nrow(Predictions_test) != length(modelresults)) {
+        stop("mismatch in number of rows")
+    } else (Predictions_test[, modelname] = modelresults)
+    
+    saveRDS(Predictions_test, "Predictions_test.RDS")
+}
+
+# Evaluation metric
+rmse = function(actual, pred) {
+    error = sqrt(mean((actual - pred)^2))
+    return(error)
+}
 
 # This function tunes the base models (rf,xgb,lr,nnet) over a specified tune grid using the
 # caret package Function call example : model_training(data=training dataset,test=testing
