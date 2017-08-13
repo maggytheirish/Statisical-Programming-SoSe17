@@ -3,6 +3,10 @@
           ### Modelling Framework for Tuning models ###
 
 #################################################################### 
+# Set the working directory 
+if (!require("rstudioapi")) install.packages("rstudioapi"); library("rstudioapi")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
 # Function to save the predictions
 save.prediction = function(modelname, modelresults) {
     
