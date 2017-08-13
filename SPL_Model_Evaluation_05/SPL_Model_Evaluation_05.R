@@ -136,3 +136,8 @@ evaluate = function(model, data, actual) {
     }
     
 }
+
+# Run the models with optimal parameters
+lr.model = lm(Sales~.,train)
+lr.res = evaluate(lr.model,test,Prediction_test$actual)
+save.predictions("lr.optimal", lr.res)
