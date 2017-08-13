@@ -1,1 +1,11 @@
+Name of Quantlet: SPL_Preprocessing_03
+ 
+Published in:     Statistical programming languages - Student Project on ''Predicting Sales Using Machine Learning''
+  
+Description:      'Separates the dataset into two datasets for training and testing and creates a file for storing model predictions'
+                  
+Keywords:         partitioning, variable, data adjustment, transformation, function
 
+Author:           Margarita Kostina, Jayalakshmi Choodamani, Camille Remigereau
+
+Submitted:        Thursday, August 10 2017 by Margarita Kostina
