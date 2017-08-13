@@ -3,6 +3,10 @@
           ### Data Cleaning and Feature Engineering ###
 
 #################################################################### 
+# Set the working directory 
+if (!require("rstudioapi")) install.packages("rstudioapi"); library("rstudioapi")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
 # Function to load the packages
 load.packages = function(p) {
     
