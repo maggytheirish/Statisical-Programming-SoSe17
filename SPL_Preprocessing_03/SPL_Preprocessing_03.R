@@ -3,6 +3,9 @@
                      ### Data partitioning ###
 
 ##################################################################### 
+#Loading packages 
+if (!require("caret")) install.packages("caret")
+
 # Loading the dataset
 FullSet = readRDS("FullSet")
 
