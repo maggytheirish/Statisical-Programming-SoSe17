@@ -2,12 +2,10 @@ Name of Quantlet: SPL_Model_Evaluation_05
  
 Published in:     Statistical programming languages - Student Project on ''Predicting Sales Using Machine Learning''
   
-Description:      
+Description:      Evaluates the predictive accuracy of both classification and regression models
  
-Keywords:         neural-network,random-forest,regression,model,cross-validation
+Keywords:         regression, model, cross-validation, classification, 
 
 Author:           Margarita Kostina, Jayalakshmi Choodamani, Camille Remigereau
 
 Submitted:        Wednesday, July 12 2017 by Margarita Kostina
-  
-Datafile:         train.RDS,test.RDS
