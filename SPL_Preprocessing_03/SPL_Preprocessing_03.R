@@ -32,5 +32,5 @@ test$Customers = NULL
 train$Customers = NULL
 
 # Saving datasets
-saveRDS(train, "train")
-saveRDS(test, "test")
+saveRDS(train, "train.RDS")
+saveRDS(test, "test.RDS")
