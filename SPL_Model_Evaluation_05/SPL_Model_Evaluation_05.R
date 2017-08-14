@@ -146,7 +146,7 @@ lr.model = lm(Sales~.,train)
 lr.res = evaluate(lr.model, test, Prediction_test$actual)
 save.predictions("lr.optimal", lr.res)
 
-nnet.model = nnet(Sales~.,train, decay = c(0, 10^seq(-3, 0, 1)), size = seq(3,4,5))
+nnet.model = nnet(Sales~.,train, decay = 1, size = 3)
 nnet.res = evaluate(nnet.model, test, Prediction_test$actual)
 save.predictions("nnet.optimal", nnet.res)
 
