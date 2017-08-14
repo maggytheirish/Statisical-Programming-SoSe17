@@ -3,10 +3,38 @@
           ### Data Cleaning and Feature Engineering ###
 
 #################################################################### 
+# Set the working directory 
+if (!require("rstudioapi")) install.packages("rstudioapi"); library("rstudioapi")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+# Function to load the packages
+load.packages = function(p) {
+    
+    for (i in seq_along(p)) {
+        if (!require(p[i], character.only = TRUE)) {
+            install.packages(p[i])
+        }
+        library(p[i], character.only = TRUE)
+    }
+    
+}
+
+# Function to load the datasets
+load.multiple.files = function(path, pattern) {
+    
+    all.csv.files = list()
+    list.filenames = list.files(path, pattern = glob2rx(pattern))
+    
+    for (i in 1:length(list.filenames)) {
+        all.csv.files[[i]] = read.csv(paste(path, list.filenames[i], sep = "/"), sep = ",")
+    }
+    
+    names(all.csv.files) = list.filenames
+    
+    return(all.csv.files)
+}
 
 # Load all required packages
-source("SPL_Helper_Functions_01.R")
-
 list.of.packages = c("rpart", "lubridate", "outliers", "rpart.plot", "xgboost", "caret", "caretEnsemble", "randomForest", 
     "e1071", "pROC", "tidyr", "klaR", "car", "devtools", "yamldebugger", "mlbench", "Hmisc", "ggvis", "relaimpo", 
     "formatR", "data.table", "zoo", "ggplot2", "forecast", "reshape2", "pdp")
@@ -78,4 +106,4 @@ unused.vars = c("Promo2SinceWeek", "Promo2SinceYear", "CompetitionOpenSinceYear"
 train[, unused.vars] = NULL
 
 # Save a full dataset for data exploration use
-saveRDS(train, "FullSet")
+saveRDS(train, "FullSet.RDS")

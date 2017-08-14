@@ -3,16 +3,39 @@
           ### Modelling Framework for Tuning models ###
 
 #################################################################### 
+# Set the working directory 
+if (!require("rstudioapi")) install.packages("rstudioapi"); library("rstudioapi")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+# Function to save the predictions
+save.prediction = function(modelname, modelresults) {
+    
+    # Loading the datasets
+    Predictions_test = readRDS("Predictions_test.RDS")
+ 
+    # check if number of observations is equal and save results
+    if (nrow(Predictions_test) != length(modelresults)) {
+        stop("mismatch in number of rows")
+    } else (Predictions_test[, modelname] = modelresults)
+    
+    saveRDS(Predictions_test, "Predictions_test.RDS")
+}
+
+# Evaluation metric
+rmse = function(actual, pred) {
+    error = sqrt(mean((actual - pred)^2))
+    return(error)
+}
 
 # This function tunes the base models (rf,xgb,lr,nnet) over a specified tune grid using the
-# caret package Function call example : model_training(data=training dataset,test=testing
+# caret package Function call example : model.training(data=training dataset,test=testing
 # dataset, method = c('rf','nnet','xgb','lr'))
 
-model_training = function(data, test, method) {
+model.training = function(data, test, method) {
     
     # Load required packages
-    library(caret)
-    library(doParallel)
+    if (!require("caret")) install.packages("caret"); library(caret)
+    if (!require("doParallel")) install.packages("doParallel"); library(doParallel)
     
     # Check method specification
     methods = c("xgbTree","avNNet", "lm", "rf")
@@ -76,3 +99,15 @@ model_training = function(data, test, method) {
     stopCluster(cl)
     return(default.model)
 }
+
+# Tuning the models
+lm.model = model.training(train, test, "lm")
+nnet.model = model.training(train, test, "nnet")
+rf.model = model.training(train, test, "rf")
+xgboost.model = model.training(train, test, "xgbTree")
+
+# Predict on the test set
+lm.res = predict(lm.model,test)
+nnet.res = predict(nnet.model,test)
+rf.res = predict(rf.model,test)
+xgboost.res = predict(xgboost.model,test)

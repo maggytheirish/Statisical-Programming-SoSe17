@@ -3,8 +3,15 @@
                      ### Data partitioning ###
 
 ##################################################################### 
+# Set the working directory 
+if (!require("rstudioapi")) install.packages("rstudioapi"); library("rstudioapi")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+#Loading packages 
+if (!require("caret")) install.packages("caret"); library("caret")
+
 # Loading the dataset
-FullSet = readRDS("FullSet")
+FullSet = readRDS("FullSet.RDS")
 
 # Creating separate test set where sales need to be predicted
 testdate = as.Date(FullSet$Date) >= "2015-07-20"  # Selecting the last 10 days for forecasting
@@ -23,7 +30,7 @@ test$Date = as.Date(test$Date)
 # Creating file to store predictions
 Predictions_test = setNames(as.data.frame(test$Sales), "actual")
 Predictions_test$benchmark = mean(test$Sales)
-saveRDS(Predictions_test, "Predictions_test.RDS")
+save(Predictions_test, "Predictions_test.RDS")
 
 # Remove the variable Sales that needs to be predicted from the testing dataset
 test$Sales = NULL
@@ -32,5 +39,5 @@ test$Customers = NULL
 train$Customers = NULL
 
 # Saving datasets
-saveRDS(train, "train")
-saveRDS(test, "test")
+saveRDS(train, "train.RDS")
+saveRDS(test, "test.RDS")

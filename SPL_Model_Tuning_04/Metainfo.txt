@@ -2,9 +2,9 @@ Name of Quantlet: SPL_Model_Tuning_04
  
 Published in:     Statistical programming languages - Student Project on ''Predicting Sales Using Machine Learning''
   
-Description:      Contains a function that tunes the models(rf,xgb,nnet,lr) over a pre specified search grid of hyperparameters
+Description:      'Contains a function that tunes the models(rf,xgb,nnet,lr) over a pre specified search grid of hyperparameters'
  
-Keywords:         neural-network,random-forest,regression,model,cross-validation
+Keywords:         neural-network, random-forest, regression, model, cross-validation
 
 Author:           Margarita Kostina, Jayalakshmi Choodamani, Camille Remigereau
 

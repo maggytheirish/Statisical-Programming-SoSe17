@@ -1,13 +1,36 @@
 #################################################################### 
 
-### Model Evaluation ###
+                        ### Model Evaluation ###
 
 #################################################################### 
+# Set the working directory 
+if (!require("rstudioapi")) install.packages("rstudioapi"); library("rstudioapi")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+# Function to save the predictions
+save.prediction = function(modelname, modelresults) {
+    
+    # Loading the datasets
+    Predictions_test = readRDS("Predictions_test.RDS")
+    
+    # check if number of observations is equal and save results
+    if (nrow(Predictions_test) != length(modelresults)) {
+        stop("mismatch in number of rows")
+    } else (Predictions_test[, modelname] = modelresults)
+    
+    saveRDS(Predictions_test, "Predictions_test.RDS")
+}
+
+# Evaluation metric
+rmse = function(actual, pred) {
+    error = sqrt(mean((actual - pred)^2))
+    return(error)
+}
 
 # This is a self designed custom wrapper that evaluates the predictive accuracy of both
 # classification and regression model. This is an 'interactive' function which takes inprocess
 # inputs from the user.  Function call example - evaluate(model= name of model,data = testing
-# dataset, actual = actual values for comparision) evaluate(lr,test,Predcictions_test$actual)
+# dataset, actual = actual values for comparision) evaluate(lr,test,Predictions_test$actual)
 
 evaluate = function(model, data, actual) {
     
@@ -117,3 +140,21 @@ evaluate = function(model, data, actual) {
     }
     
 }
+
+# Run the models with optimal parameters
+lr.model = lm(Sales~.,train)
+lr.res = evaluate(lr.model, test, Predictions_test$actual)
+save.prediction("lr.optimal", lr.res)
+
+nnet.model = nnet(Sales~.,train, decay = 1, size = 3)
+nnet.res = evaluate(nnet.model, test, Predictions_test$actual)
+save.prediction("nnet.optimal", nnet.res)
+
+rf.model = rf(Sales~.,train, ntree = 500, mtry = 8)
+rf.res = evaluate(rf.model, test, Predictions_test$actual)
+save.prediction("rf.optimal", rf.res)
+
+xgboost.model = xgboost(Sales~.,train, nrounds = 400, max_depth = 10, eta = 0.05, gamma = 0, 
+                        colsample_bytree = 1, min_child_weight = 1, subsample = 0.5)
+xgboost.res = evaluate(xgboost.model, test, Predictions_test$actual)
+save.prediction("xgboost.optimal", xgboost.res)
