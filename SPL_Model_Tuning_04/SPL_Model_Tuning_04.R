@@ -15,7 +15,7 @@ model_training = function(data, test, method) {
     library(doParallel)
     
     # Check method specification
-    methods = c("xgbTree", "nnet", "lm", "rf")
+    methods = c("xgbTree","avNNet", "lm", "rf")
     
     if (!is.character(method)) {
         stop("method must be a string")
@@ -45,8 +45,8 @@ model_training = function(data, test, method) {
         nd = n - 5
         nup = n + 5
         tuneGrid = expand.grid(mtry = nd:nup, ntree = 500)
-    } else if (method == "nnet") {
-        tuneGrid = expand.grid(.decay = c(0, 10^seq(-3, 0, 1)), .size = c(3, 4, 5))
+    } else if (method == "avNNet") {
+        tuneGrid = expand.grid(decay = c(0, 10^seq(-3, 0, 1)), size = c(3, 4, 5),bag=F)
     } else if (method == "lm") {
         tuneGrid = NULL
     }
@@ -57,8 +57,16 @@ model_training = function(data, test, method) {
     
     
     # train model
+    if(method == "avNNet"){
+      default.model = caret::train(Sales ~ ., data = data, method = method, 
+                                   tuneGrid = tuneGrid, maxit = 1000,
+                                   preProc = c("center", "scale"), 
+                                   linout = 1, MaxNWts = 5000,
+                                   metric = "RMSE", trControl = model.control)
+    }else {
     default.model = caret::train(Sales ~ ., data = data, method = method, tuneGrid = tuneGrid, 
         metric = "RMSE", trControl = model.control)
+    }
     
     # time spent
     time.end = Sys.time()
