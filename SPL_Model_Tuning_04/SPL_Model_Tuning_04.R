@@ -96,7 +96,7 @@ model.training = function(data, test, method) {
 lm.model = model.training(train, test, "lm")
 nnet.model = model.training(train, test, "nnet")
 rf.model = model.training(train, test, "rf")
-xgboost.model = model.training(train, test, "xgboost")
+xgboost.model = model.training(train, test, "xgbTree")
 
 # Predict on the test set
 lm.res = predict(lm.model,test)
