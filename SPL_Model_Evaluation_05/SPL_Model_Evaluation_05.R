@@ -155,6 +155,6 @@ rf.res = evaluate(rf.model, test, Predictions_test$actual)
 save.prediction("rf.optimal", rf.res)
 
 xgboost.model = xgboost(Sales~.,train, nrounds = 400, max_depth = 10, eta = 0.05, gamma = 0, 
-                        colsample_bytree = 1, min_child_weight = 1, subsample = 0.6)
+                        colsample_bytree = 1, min_child_weight = 1, subsample = 0.5)
 xgboost.res = evaluate(xgboost.model, test, Predictions_test$actual)
 save.prediction("xgboost.optimal", xgboost.res)
