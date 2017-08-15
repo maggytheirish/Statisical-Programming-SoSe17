@@ -29,7 +29,7 @@ rmse = function(actual, pred) {
 
 # This function tunes the base models (rf,xgb,lr,nnet) over a specified tune grid using the
 # caret package Function call example : model.training(data=training dataset,test=testing
-# dataset, method = c('rf','nnet','xgb','lr'))
+# dataset, method = c("xgbTree","avNNet", "lm", "rf"))
 
 model.training = function(data, test, method) {
     
@@ -60,14 +60,15 @@ model.training = function(data, test, method) {
     
     # Tune grids for hyperparameters for each model
     if (method == "xgbTree") {
-        tuneGrid = expand.grid(nrounds = c(100, 200, 400), max_depth = c(6, 8, 10), eta = c(0.01, 
-            0.05), gamma = 0, colsample_bytree = c(0.3, 0.5, 1), min_child_weight = 1, subsample = c(0.5, 
-            0.6, 0.8, 1))
+        tuneGrid = expand.grid(nrounds = c(100, 200, 400), 
+                               max_depth = c(6, 8, 10), 
+                               eta = c(0.01,0.05), 
+                               gamma = 0, 
+                               colsample_bytree = c(0.3, 0.5, 1), 
+                               min_child_weight = 1, 
+                               subsample = c(0.5,0.6, 0.8, 1))
     } else if (method == "rf") {
-        n = round(ncol(data)/3, 0)
-        nd = n - 5
-        nup = n + 5
-        tuneGrid = expand.grid(mtry = nd:nup, ntree = 500)
+        tuneGrid = expand.grid(mtry = 1:10)
     } else if (method == "avNNet") {
         tuneGrid = expand.grid(decay = c(0, 10^seq(-3, 0, 1)), size = c(3, 4, 5),bag=F)
     } else if (method == "lm") {
@@ -96,18 +97,34 @@ model.training = function(data, test, method) {
     dur = time.end - time.start
     print(dur)
     
-    stopCluster(cl)
+    #predict on independent test set 
+    default.pred = predict(default.model, newdata = test)
+    
+    #model performance
+    cat("\n","The best tune is :","\n")
+    print(default.model$bestTune)
+
+    Predictions_test = readRDS("Predictions_test.RDS")
+    error = rmse(Predictions_test$actual,default.pred)
+    
+    print(paste0("The RMSE on the test set: ", error))
+
+    #saving the model and the predictions
+    save.prediction(paste0(method,".","tune"),default.pred)
+    saveRDS(default.model,paste0(method,"_","model",".","RDS"))
+    
+    stopCluster(cl) #to clear up the cores
+    registerDoSEQ()
     return(default.model)
 }
 
-# Tuning the models
+
+# Read in the datasets
+train = readRDS("train.RDS")
+test = readRDS("test.RDS")
+
+# Function call for tuning the models
 lm.model = model.training(train, test, "lm")
-nnet.model = model.training(train, test, "nnet")
+nnet.model = model.training(train,test,"avNNet")
 rf.model = model.training(train, test, "rf")
 xgboost.model = model.training(train, test, "xgbTree")
-
-# Predict on the test set
-lm.res = predict(lm.model,test)
-nnet.res = predict(nnet.model,test)
-rf.res = predict(rf.model,test)
-xgboost.res = predict(xgboost.model,test)
