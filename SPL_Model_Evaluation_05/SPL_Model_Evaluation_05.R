@@ -154,7 +154,22 @@ rf.model = rf(Sales~.,train, ntree = 500, mtry = 8)
 rf.res = evaluate(rf.model, test, Predictions_test$actual)
 save.prediction("rf.optimal", rf.res)
 
-xgboost.model = xgboost(Sales~.,train, nrounds = 400, max_depth = 10, eta = 0.05, gamma = 0, 
-                        colsample_bytree = 1, min_child_weight = 1, subsample = 0.6)
-xgboost.res = evaluate(xgboost.model, test, Predictions_test$actual)
-save.prediction("xgboost.optimal", xgboost.res)
+model.control<- trainControl(
+    method = "cv", # cross validation
+    number = 5, # number of folds in cross validation
+    allowParallel = FALSE # Enable parallelization if available
+)
+xgb.parms.opt <- expand.grid(nrounds = 400, 
+                             max_depth = 10, 
+                             eta = 0.05, 
+                             gamma = 0,
+                             colsample_bytree = 1,
+                             min_child_weight = 1, 
+                             subsample = 0.6)
+xgb.model <- train(Sales~., data = train,  
+             method = "xgbTree",
+             tuneGrid = xgb.parms.opt,
+             metric = "RMSE", trControl = model.control)
+
+xgboost.res = evaluate(xgb.model, test, Predictions_test$actual)
+save.prediction("xgb.optimal", xgb.res)
