@@ -6,20 +6,7 @@
 # Set the working directory 
 if (!require("rstudioapi")) install.packages("rstudioapi"); library("rstudioapi")
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-
-# Function to save the predictions
-save.prediction = function(modelname, modelresults) {
-    
-    # Loading the datasets
-    Predictions_test = readRDS("Predictions_test.RDS")
-    
-    # check if number of observations is equal and save results
-    if (nrow(Predictions_test) != length(modelresults)) {
-        stop("mismatch in number of rows")
-    } else (Predictions_test[, modelname] = modelresults)
-    
-    saveRDS(Predictions_test, "Predictions_test.RDS")
-}
+if (!require("e1071")) install.packages("e1071"); library("e1071")
 
 # Evaluation metric
 rmse = function(actual, pred) {
@@ -32,11 +19,15 @@ rmse = function(actual, pred) {
 # inputs from the user.  Function call example - evaluate(model= name of model,data = testing
 # dataset, actual = actual values for comparision) evaluate(lr,test,Predictions_test$actual)
 
-evaluate = function(model, data, actual) {
+evaluate = function(model,modelname,data, actual) {
     
-    type = readline(prompt = "Choose - Classification or Regression")
+  print("This is an interactive function. Please type in your responses in the console :")  
+  type = readline(prompt = "Type your response - Classification or Regression : ")
     
-    if (type == "Classification") {
+  #Error handling
+  if(type!="Classification"&type!="Regression"){
+    stop("Choose an appropriate method. Check for typos!")}
+  if (type == "Classification") {
         
         classifier = readline(prompt = "Type in the name of the classifier : (eg. lr, xgb)")
         
@@ -89,9 +80,12 @@ evaluate = function(model, data, actual) {
             print(summary(actual))
             
             # Metric
-            metric = readline(prompt = "Which metric would you like to use for error analysis?
-                       Choose btw rmse,user. If you want to use a specific metric please
-                       add it to the helper function and name it as user.")
+            cat("\n", "Which metric would you like to use for error analysis?","\n",
+                "If you want to use a specific metric please add it to the helper function and name it as user.")
+            metric = readline(prompt =  "Choose metric - rmse,user : ")
+            #Error handling
+            if(metric!="rmse"&metric!="user"){
+              stop("Choose an appropriate method. Check for typos!")}
             
             if (metric == "rmse") {
                 
@@ -104,15 +98,14 @@ evaluate = function(model, data, actual) {
             
             # Error decomposition
             mse = mean((actual - pred)^2)
-            bias = abs(mean(actual) - mean(pred))
-            variance = var(actual, pred)  #mse = bias^2 + var
-            unexplained = abs(mse - (bias^2 + variance))/mse  #what remains after bias and variance
+            bias = (mean(pred) - mean(actual))
+            diff.var = var(actual) - var(pred)  
             actual.skew = skewness(actual)  # to check the distributions
             predicted.skew = skewness(pred)
             
             # Saving results
             
-            error.matrix = cbind(error, mse, bias, variance, unexplained, actual.skew, predicted.skew)
+            error.matrix = cbind(error, mse, bias, diff.var, actual.skew, predicted.skew)
             cat("\n", "Decomposing the error : ", "\n")
             print(error.matrix)
             
@@ -127,49 +120,32 @@ evaluate = function(model, data, actual) {
             cat("\n", "Plotting the distributions of the actual and predicted values - green actual,red predicted")
             
             dist.plot = plot(x1, y1, col = "green", xlim = range(c(x1, x2)), ylim = range(c(y1, 
-                y2)), xlab = "Sales", ylab = "Normalized Sales")
+                y2)), xlab = "Sales", ylab = "Density")
             points(x2, y2, col = "red")
+            title(main = as.character(modelname))
             legend("topright", legend = c("Actual", "Predicted"), fill = c("green", "red"))
             
             dist.plot
             
             pred = as.vector(round(pred))
-            return(pred)
-            
-        }
+            return(pred)}
     }
     
 }
 
-# Run the models with optimal parameters
+#Read the datsets
+test = readRDS("test.RDS")
+Predictions_test = readRDS("predictions_test.RDS")
+
+#Loading the saved models
 lr.model = lm(Sales~.,train)
-lr.res = evaluate(lr.model, test, Predictions_test$actual)
-save.prediction("lr.optimal", lr.res)
+nn.model = readRDS("avNNet_model.RDS")
+xgb.model = readRDS("xgbTree_model.RDS")
+#rf.model = readRDS("rf_model.RDS")
+rf.model = randomForest(Sales~.,train,ntree=500,mtry=12)
 
-nnet.model = nnet(Sales~.,train, decay = 1, size = 3)
-nnet.res = evaluate(nnet.model, test, Predictions_test$actual)
-save.prediction("nnet.optimal", nnet.res)
-
-rf.model = rf(Sales~.,train, ntree = 500, mtry = 8)
-rf.res = evaluate(rf.model, test, Predictions_test$actual)
-save.prediction("rf.optimal", rf.res)
-
-model.control<- trainControl(
-    method = "cv", # cross validation
-    number = 5, # number of folds in cross validation
-    allowParallel = FALSE # Enable parallelization if available
-)
-xgb.parms.opt <- expand.grid(nrounds = 400, 
-                             max_depth = 10, 
-                             eta = 0.05, 
-                             gamma = 0,
-                             colsample_bytree = 1,
-                             min_child_weight = 1, 
-                             subsample = 0.6)
-xgb.model <- train(Sales~., data = train,  
-             method = "xgbTree",
-             tuneGrid = xgb.parms.opt,
-             metric = "RMSE", trControl = model.control)
-
-xgboost.res = evaluate(xgb.model, test, Predictions_test$actual)
-save.prediction("xgb.optimal", xgb.res)
+#Evaluate the predictions
+lr.res = evaluate(lr.model,"Linear Regression",test,Predictions_test$actual)
+nn.res = evaluate(nn.model,"Neural Network",test,Predictions_test$actual)
+rf.res = evaluate(rf.model,"Random Forest",test,Predictions_test$actual)
+xgb.res = evaluate(xgb.model,"Gradient Boosting",test,Predictions_test$actual)
