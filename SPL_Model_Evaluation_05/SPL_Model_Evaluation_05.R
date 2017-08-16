@@ -141,8 +141,7 @@ Predictions_test = readRDS("predictions_test.RDS")
 lr.model = lm(Sales~.,train)
 nn.model = readRDS("avNNet_model.RDS")
 xgb.model = readRDS("xgbTree_model.RDS")
-#rf.model = readRDS("rf_model.RDS")
-rf.model = randomForest(Sales~.,train,ntree=500,mtry=12)
+rf.model = randomForest(Sales~.,train,ntree=500,mtry=12) #This might take a while, use smaller dataset
 
 #Evaluate the predictions
 lr.res = evaluate(lr.model,"Linear Regression",test,Predictions_test$actual)
