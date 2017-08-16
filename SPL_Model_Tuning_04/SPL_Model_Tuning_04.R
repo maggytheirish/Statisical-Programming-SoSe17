@@ -68,7 +68,7 @@ model.training = function(data, test, method) {
                                min_child_weight = 1, 
                                subsample = c(0.5,0.6, 0.8, 1))
     } else if (method == "rf") {
-        tuneGrid = expand.grid(mtry = 1:10)
+      tuneGrid = expand.grid(mtry = 4:12)  
     } else if (method == "avNNet") {
         tuneGrid = expand.grid(decay = c(0, 10^seq(-3, 0, 1)), size = c(3, 4, 5),bag=F)
     } else if (method == "lm") {
@@ -121,6 +121,7 @@ model.training = function(data, test, method) {
 
 # Read in the datasets
 train = readRDS("train.RDS")
+train = train[1:1000,] #the model tuning takes a while,using 1000 observations for checking the code
 test = readRDS("test.RDS")
 
 # Function call for tuning the models
