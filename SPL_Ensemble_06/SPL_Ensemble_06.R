@@ -6,6 +6,13 @@
 # Set the working directory 
 if (!require("rstudioapi")) install.packages("rstudioapi"); library("rstudioapi")
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+if (!require("caret")) install.packages("caret"); library("caret")
+
+# Evaluation metric
+rmse = function(actual, pred) {
+  error = sqrt(mean((actual - pred)^2))
+  return(error)
+}
 
 #Modified function to evaluate model
 results = function(model,modelname,data, actual) {
@@ -62,8 +69,8 @@ predictions = readRDS("Predictions_test.RDS")
 ## Split into two DFs, 50% each, based on Sales
 idx_ensemble = createDataPartition(y = predictions$actual, p = 0.5, list = FALSE)
 
-trainset_ensemble = test_predictions[idx_ensemble,]
-testset_ensemble = test_predictions[-idx_ensemble,]
+trainset_ensemble = predictions[idx_ensemble,]
+testset_ensemble = predictions[-idx_ensemble,]
 
 #Remove actual values
 testset_ensemble$actual = NULL

@@ -149,4 +149,3 @@ lr.res = evaluate(lr.model,"Linear Regression",test,Predictions_test$actual)
 nn.res = evaluate(nn.model,"Neural Network",test,Predictions_test$actual)
 #rf.res = evaluate(rf.model,"Random Forest",test,Predictions_test$actual)
 xgb.res = evaluate(xgb.model,"Gradient Boosting",test,Predictions_test$actual)
-
