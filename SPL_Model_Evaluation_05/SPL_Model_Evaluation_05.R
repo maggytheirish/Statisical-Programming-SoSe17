@@ -134,6 +134,7 @@ evaluate = function(model,modelname,data, actual) {
 }
 
 #Read the datsets
+train = readRDS("train.RDS")
 test = readRDS("test.RDS")
 Predictions_test = readRDS("predictions_test.RDS")
 
@@ -141,10 +142,11 @@ Predictions_test = readRDS("predictions_test.RDS")
 lr.model = lm(Sales~.,train)
 nn.model = readRDS("avNNet_model.RDS")
 xgb.model = readRDS("xgbTree_model.RDS")
-rf.model = randomForest(Sales~.,train,ntree=500,mtry=12) #This might take a while, use smaller dataset
+#rf.model = randomForest(Sales~.,train,ntree=500,mtry=12) #This might take a while, use smaller dataset
 
 #Evaluate the predictions
 lr.res = evaluate(lr.model,"Linear Regression",test,Predictions_test$actual)
 nn.res = evaluate(nn.model,"Neural Network",test,Predictions_test$actual)
-rf.res = evaluate(rf.model,"Random Forest",test,Predictions_test$actual)
+#rf.res = evaluate(rf.model,"Random Forest",test,Predictions_test$actual)
 xgb.res = evaluate(xgb.model,"Gradient Boosting",test,Predictions_test$actual)
+
