@@ -8,6 +8,6 @@ Keywords:         neural-network, random-forest, regression, model, cross-valida
 
 Author:           Margarita Kostina, Jayalakshmi Choodamani, Camille Remigereau
 
-Submitted:        Wednesday, July 12 2017 by Margarita Kostina
+Submitted:        Friday, August 18 2017 by Margarita Kostina, Jayalakshmi Choodamani, Camille Remigereau
   
 Datafile:         train.RDS,test.RDS
