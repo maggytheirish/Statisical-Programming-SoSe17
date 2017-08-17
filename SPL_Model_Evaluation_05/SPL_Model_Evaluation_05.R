@@ -148,7 +148,7 @@ lr.model = lm(Sales~.,train)
 nn.model = readRDS("avNNet_model.RDS")
 xgb.model = readRDS("xgbTree_model.RDS")
 
-#Evaluate the predictions - (Add your responses in the console)
+#Evaluate the predictions - (Add your responses in the console), Choose-Regression,rmse
 lr.res = evaluate(lr.model,"Linear Regression",test,Predictions_test$actual)
 nn.res = evaluate(nn.model,"Neural Network",test,Predictions_test$actual)
 xgb.res = evaluate(xgb.model,"Gradient Boosting",test,Predictions_test$actual)
