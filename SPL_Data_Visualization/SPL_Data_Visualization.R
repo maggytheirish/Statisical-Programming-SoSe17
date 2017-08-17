@@ -1,3 +1,7 @@
+# Set the working directory 
+if (!require("rstudioapi")) install.packages("rstudioapi"); library("rstudioapi")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
 # Function to load the packages
 load.packages = function(p) {
     
@@ -16,7 +20,7 @@ list.of.packages = c("rpart", "lubridate", "outliers", "rpart.plot", "xgboost", 
 sapply(list.of.packages, load.packages)
 
 # Loading the full dataset
-FullSet = readRDS("FullSet")
+FullSet = readRDS("FullSet.RDS")
 
 # Generating an additional date variable
 FullSet$NewDate = FullSet$Date
@@ -84,7 +88,10 @@ ggplot(FullSet, aes(x = as.Date(NewDate), y = AvgVisitsPerStorePerMonth)) + geom
 ggsave("Average_Customers_per_Store_Per_Month.png")
 
 # Loading xgb model for further plotting
-xgb = readRDS("xgb")
+xgb.model = readRDS("xgb")
+
+#Calculating variable importance
+xgb.varImp <- varImp(xgb.model, scale=TRUE)
 
 # Calculating partial dependence
 xgb.partialPlots = list()  # empty result list

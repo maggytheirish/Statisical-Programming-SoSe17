@@ -8,6 +8,6 @@ Keywords:         plot, summary, statistics, graphical representation, data visu
 
 Author:           Margarita Kostina, Jayalakshmi Choodamani, Camille Remigereau
 
-Submitted:        Wednesday, July 12 2017 by Margarita Kostina
+Submitted:        Friday, August 18 2017 by Margarita Kostina, Jayalakshmi Choodamani, Camille Remigereau
   
 Datafile:         FullSet.RDS, xgb.RDS
