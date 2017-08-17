@@ -26,6 +26,7 @@ evaluate = function(model,modelname,data, actual) {
     
   #Loading packages
   if (!require("e1071")) install.packages("e1071"); library("e1071")
+  if (!require("randomForest")) install.packages("randomForest"); library("randomForest")
   
   #Error handling
   if(type!="Classification"&type!="Regression"){
