@@ -71,6 +71,7 @@ results = function(model,modelname,data, actual) {
 predictions = readRDS("Predictions_test.RDS")
 
 ## Split into two DFs, 50% each, based on Sales
+set.seed(123)
 idx_ensemble = createDataPartition(y = predictions$actual, p = 0.5, list = FALSE)
 
 trainset_ensemble = predictions[idx_ensemble,] #using one half of the predictions for training
@@ -79,6 +80,15 @@ testset_ensemble = predictions[-idx_ensemble,] #independent testset
 #Remove actual values
 sales_testset = testset_ensemble$actual # saving actual values for comparison
 testset_ensemble$actual = NULL #Removing actual values from the test set
+
+# Comparing rmse values for the different models on the testset
+for(i in c(1:5)){
+  error = matrix(NA,nrow=1,ncol = 5)
+  colnames(error) = colnames(testset_ensemble)
+  for(i in c(1:5)){
+    error[1,i] = rmse(sales_testset,as.vector(testset_ensemble[,i]))}
+  error = as.data.frame(error)
+}
 
 # Train Ensemble
 
@@ -94,6 +104,7 @@ xgb.parms.default = expand.grid(nrounds = 400,
                                  subsample = 0.6)
 
 # Train Model
+set.seed(123)
 xgb.ensemble = caret::train(actual~., data = trainset_ensemble,  
                              method = "xgbTree",
                              tuneGrid = xgb.parms.default,
@@ -102,15 +113,6 @@ xgb.ensemble = caret::train(actual~., data = trainset_ensemble,
 
 # Predict 
 xgb.ensemble.pred = results(xgb.ensemble,"xgb.ensemble",testset_ensemble,sales_testset)
-
-# Comparing rmse values for the different models on the testset
-for(i in c(1:5)){
-  error = matrix(NA,nrow=1,ncol = 5)
-  colnames(error) = colnames(testset_ensemble)
-  for(i in c(1:5)){
-  error[1,i] = rmse(sales_testset,as.vector(testset_ensemble[,i]))}
-  error = as.data.frame(error)
-}
-
+xgb.ensemble.pred = ifelse(xgb.ensemble.pred<=10,0,xgb.ensemble.pred)
 error$ensemble = rmse(sales_testset,xgb.ensemble.pred) #adding rmse from ensemble 
 print(error)
