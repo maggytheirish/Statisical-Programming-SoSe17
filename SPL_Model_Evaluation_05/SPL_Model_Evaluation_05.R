@@ -99,13 +99,13 @@ evaluate = function(model,modelname,data, actual) {
             # Error decomposition
             mse = mean((actual - pred)^2)
             bias = (mean(pred) - mean(actual))
-            diff.var = var(actual) - var(pred)  
+            var = mse - (bias^2) #(Decomposition of mse)
             actual.skew = skewness(actual)  # to check the distributions
             predicted.skew = skewness(pred)
             
             # Saving results
             
-            error.matrix = cbind(error, mse, bias, diff.var, actual.skew, predicted.skew)
+            error.matrix = cbind(error, mse, bias,var, actual.skew, predicted.skew)
             cat("\n", "Decomposing the error : ", "\n")
             print(error.matrix)
             
@@ -147,5 +147,5 @@ xgb.model = readRDS("xgbTree_model.RDS")
 #Evaluate the predictions
 lr.res = evaluate(lr.model,"Linear Regression",test,Predictions_test$actual)
 nn.res = evaluate(nn.model,"Neural Network",test,Predictions_test$actual)
-#rf.res = evaluate(rf.model,"Random Forest",test,Predictions_test$actual)
+rf.res = evaluate(rf.model,"Random Forest",test,Predictions_test$actual)
 xgb.res = evaluate(xgb.model,"Gradient Boosting",test,Predictions_test$actual)
