@@ -3,10 +3,14 @@
                         ### Model Evaluation ###
 
 #################################################################### 
+# This is a self designed custom wrapper that evaluates the predictive accuracy of both
+# classification and regression model. This is an 'interactive' function which takes inprocess
+# inputs from the user.  Function call example - evaluate(model= name of model,data = testing
+# dataset, actual = actual values for comparision) evaluate(lr,test,Predictions_test$actual)
+
 # Set the working directory 
 if (!require("rstudioapi")) install.packages("rstudioapi"); library("rstudioapi")
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-if (!require("e1071")) install.packages("e1071"); library("e1071")
 
 # Evaluation metric
 rmse = function(actual, pred) {
@@ -14,16 +18,15 @@ rmse = function(actual, pred) {
     return(error)
 }
 
-# This is a self designed custom wrapper that evaluates the predictive accuracy of both
-# classification and regression model. This is an 'interactive' function which takes inprocess
-# inputs from the user.  Function call example - evaluate(model= name of model,data = testing
-# dataset, actual = actual values for comparision) evaluate(lr,test,Predictions_test$actual)
-
+# Interactive evaluation function 
 evaluate = function(model,modelname,data, actual) {
     
   print("This is an interactive function. Please type in your responses in the console :")  
   type = readline(prompt = "Type your response - Classification or Regression : ")
     
+  #Loading packages
+  if (!require("e1071")) install.packages("e1071"); library("e1071")
+  
   #Error handling
   if(type!="Classification"&type!="Regression"){
     stop("Choose an appropriate method. Check for typos!")}
@@ -100,12 +103,13 @@ evaluate = function(model,modelname,data, actual) {
             mse = mean((actual - pred)^2)
             bias = (mean(pred) - mean(actual))
             var = mse - (bias^2) #(Decomposition of mse)
+            percent.var = var/mse
             actual.skew = skewness(actual)  # to check the distributions
             predicted.skew = skewness(pred)
             
             # Saving results
             
-            error.matrix = cbind(error, mse, bias,var, actual.skew, predicted.skew)
+            error.matrix = cbind(error, mse, bias,var,percent.var,actual.skew, predicted.skew)
             cat("\n", "Decomposing the error : ", "\n")
             print(error.matrix)
             
@@ -136,16 +140,20 @@ evaluate = function(model,modelname,data, actual) {
 #Read the datsets
 train = readRDS("train.RDS")
 test = readRDS("test.RDS")
-Predictions_test = readRDS("predictions_test.RDS")
+Predictions_test = readRDS("Predictions_test.RDS")
 
 #Loading the saved models
 lr.model = lm(Sales~.,train)
 nn.model = readRDS("avNNet_model.RDS")
 xgb.model = readRDS("xgbTree_model.RDS")
-#rf.model = randomForest(Sales~.,train,ntree=500,mtry=12) #This might take a while, use smaller dataset
 
-#Evaluate the predictions
+#Evaluate the predictions - (Add your responses in the console)
 lr.res = evaluate(lr.model,"Linear Regression",test,Predictions_test$actual)
 nn.res = evaluate(nn.model,"Neural Network",test,Predictions_test$actual)
-rf.res = evaluate(rf.model,"Random Forest",test,Predictions_test$actual)
 xgb.res = evaluate(xgb.model,"Gradient Boosting",test,Predictions_test$actual)
+
+#The random forest models might take a while, use smaller dataset
+# train = train[1:1000,]
+#rf.model = randomForest(Sales~.,train,ntree=500,mtry=12) 
+#rf.res = evaluate(rf.model,"Random Forest",test,Predictions_test$actual)
+
