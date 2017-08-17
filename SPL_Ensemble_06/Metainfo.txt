@@ -1,1 +1,11 @@
+Name of Quantlet: SPL_Model_Evaluation_06
+ 
+Published in:     Statistical programming languages - Student Project on ''Predicting Sales Using Machine Learning''
+  
+Description:      'Creates the ensemble model, which collects predictions from the base learners, and evaluates its performance'
+ 
+Keywords:         model, cross-validation, function, plot, visualization
 
+Author:           Margarita Kostina, Jayalakshmi Choodamani, Camille Remigereau
+
+Submitted:        Friday, August 18 2017 by Margarita Kostina, Jayalakshmi Choodamani, Camille Remigereau
