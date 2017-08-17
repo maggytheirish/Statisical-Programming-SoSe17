@@ -30,7 +30,7 @@ test$Date = as.Date(test$Date)
 # Creating file to store predictions
 Predictions_test = setNames(as.data.frame(test$Sales), "actual")
 Predictions_test$benchmark = mean(test$Sales)
-save(Predictions_test, "Predictions_test.RDS")
+saveRDS(Predictions_test, "Predictions_test.RDS")
 
 # Remove the variable Sales that needs to be predicted from the testing dataset
 test$Sales = NULL
