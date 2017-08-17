@@ -90,6 +90,9 @@ ggsave("Average_Customers_per_Store_Per_Month.png")
 # Loading xgb model for further plotting
 xgb = readRDS("xgb")
 
+#Calculating variable importance
+xgb.varImp <- varImp(xgb, scale=TRUE)
+
 # Calculating partial dependence
 xgb.partialPlots = list()  # empty result list
 imp.var.xgb = c("Open", "CompetitionDistance", "Store", "Promo", "CompetitionSinceDate", "Date", "Promo2SinceDate", 
