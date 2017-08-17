@@ -3,6 +3,10 @@
           ### Modelling Framework for Tuning models ###
 
 #################################################################### 
+# This function tunes the base models (rf,xgb,lr,nnet) over a specified tune grid using the
+# caret package Function call example : model.training(data=training dataset,test=testing
+# dataset, method = c("xgbTree","avNNet", "lm", "rf"))
+
 # Set the working directory 
 if (!require("rstudioapi")) install.packages("rstudioapi"); library("rstudioapi")
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
@@ -27,10 +31,7 @@ rmse = function(actual, pred) {
     return(error)
 }
 
-# This function tunes the base models (rf,xgb,lr,nnet) over a specified tune grid using the
-# caret package Function call example : model.training(data=training dataset,test=testing
-# dataset, method = c("xgbTree","avNNet", "lm", "rf"))
-
+# Funtion for model tuning
 model.training = function(data, test, method) {
     
     # Load required packages
@@ -68,7 +69,7 @@ model.training = function(data, test, method) {
                                min_child_weight = 1, 
                                subsample = c(0.5,0.6, 0.8, 1))
     } else if (method == "rf") {
-      tuneGrid = expand.grid(mtry = 4:12)  
+      tuneGrid = expand.grid(mtry = 4:12) #default mtry for regression = sqrt(no of cols)
     } else if (method == "avNNet") {
         tuneGrid = expand.grid(decay = c(0, 10^seq(-3, 0, 1)), size = c(3, 4, 5),bag=F)
     } else if (method == "lm") {
