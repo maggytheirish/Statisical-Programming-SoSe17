@@ -88,10 +88,10 @@ ggplot(FullSet, aes(x = as.Date(NewDate), y = AvgVisitsPerStorePerMonth)) + geom
 ggsave("Average_Customers_per_Store_Per_Month.png")
 
 # Loading xgb model for further plotting
-xgb = readRDS("xgb")
+xgb.model = readRDS("xgb")
 
 #Calculating variable importance
-xgb.varImp <- varImp(xgb, scale=TRUE)
+xgb.varImp <- varImp(xgb.model, scale=TRUE)
 
 # Calculating partial dependence
 xgb.partialPlots = list()  # empty result list
