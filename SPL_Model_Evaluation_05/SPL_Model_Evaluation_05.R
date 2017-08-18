@@ -8,8 +8,9 @@
 # inputs from the user.  Function call example - evaluate(model= name of model,data = testing
 # dataset, actual = actual values for comparision) evaluate(lr,test,Predictions_test$actual)
 
-# Set the working directory 
-if (!require("rstudioapi")) install.packages("rstudioapi"); library("rstudioapi")
+# Set the working directory
+if (!require("rstudioapi")) install.packages("rstudioapi")
+library("rstudioapi")
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 # Evaluation metric
@@ -18,20 +19,25 @@ rmse = function(actual, pred) {
     return(error)
 }
 
-# Interactive evaluation function 
-evaluate = function(model,modelname,data, actual) {
+# Interactive evaluation function
+evaluate = function(model, modelname, data, actual) {
     
-  print("This is an interactive function. Please type in your responses in the console :")  
-  type = readline(prompt = "Type your response - Classification or Regression : ")
+    print("This is an interactive function. Please type in your responses in the console :")
+    type = readline(prompt = "Type your response - Classification or Regression : ")
     
-  #Loading packages
-  if (!require("e1071")) install.packages("e1071"); library("e1071")
-  if (!require("randomForest")) install.packages("randomForest"); library("randomForest")
-  
-  #Error handling
-  if(type!="Classification"&type!="Regression"){
-    stop("Choose an appropriate method. Check for typos!")}
-  if (type == "Classification") {
+    # Loading packages
+    if (!require("e1071")) 
+        install.packages("e1071")
+    library("e1071")
+    if (!require("randomForest")) 
+        install.packages("randomForest")
+    library("randomForest")
+    
+    # Error handling
+    if (type != "Classification" & type != "Regression") {
+        stop("Choose an appropriate method. Check for typos!")
+    }
+    if (type == "Classification") {
         
         classifier = readline(prompt = "Type in the name of the classifier : (eg. lr, xgb)")
         
@@ -84,12 +90,12 @@ evaluate = function(model,modelname,data, actual) {
             print(summary(actual))
             
             # Metric
-            cat("\n", "Which metric would you like to use for error analysis?","\n",
-                "If you want to use a specific metric please add it to the helper function and name it as user.")
-            metric = readline(prompt =  "Choose metric - rmse,user : ")
-            #Error handling
-            if(metric!="rmse"&metric!="user"){
-              stop("Choose an appropriate method. Check for typos!")}
+            cat("\n", "Which metric would you like to use for error analysis?", "\n", "If you want to use a specific metric please add it to the helper function and name it as user.")
+            metric = readline(prompt = "Choose metric - rmse,user : ")
+            # Error handling
+            if (metric != "rmse" & metric != "user") {
+                stop("Choose an appropriate method. Check for typos!")
+            }
             
             if (metric == "rmse") {
                 
@@ -103,14 +109,14 @@ evaluate = function(model,modelname,data, actual) {
             # Error decomposition
             mse = mean((actual - pred)^2)
             bias = (mean(pred) - mean(actual))
-            var = mse - (bias^2) #(Decomposition of mse)
+            var = mse - (bias^2)  #(Decomposition of mse)
             percent.var = var/mse
             actual.skew = skewness(actual)  # to check the distributions
             predicted.skew = skewness(pred)
             
             # Saving results
             
-            error.matrix = cbind(error, mse, bias,var,percent.var,actual.skew, predicted.skew)
+            error.matrix = cbind(error, mse, bias, var, percent.var, actual.skew, predicted.skew)
             cat("\n", "Decomposing the error : ", "\n")
             print(error.matrix)
             
@@ -124,8 +130,8 @@ evaluate = function(model,modelname,data, actual) {
             
             cat("\n", "Plotting the distributions of the actual and predicted values - green actual,red predicted")
             
-            dist.plot = plot(x1, y1, col = "green", xlim = range(c(x1, x2)), ylim = range(c(y1, 
-                y2)), xlab = "Sales", ylab = "Density")
+            dist.plot = plot(x1, y1, col = "green", xlim = range(c(x1, x2)), ylim = range(c(y1, y2)), xlab = "Sales", 
+                ylab = "Density")
             points(x2, y2, col = "red")
             title(main = as.character(modelname))
             legend("topright", legend = c("Actual", "Predicted"), fill = c("green", "red"))
@@ -133,28 +139,27 @@ evaluate = function(model,modelname,data, actual) {
             dist.plot
             
             pred = as.vector(round(pred))
-            return(pred)}
+            return(pred)
+        }
     }
     
 }
 
-#Read the datsets
+# Read the datsets
 train = readRDS("train.RDS")
 test = readRDS("test.RDS")
 Predictions_test = readRDS("Predictions_test.RDS")
 
-#Loading the saved models
-lr.model = lm(Sales~.,train)
+# Loading the saved models
+lr.model = lm(Sales ~ ., train)
 nn.model = readRDS("avNNet_model.RDS")
 xgb.model = readRDS("xgbTree_model.RDS")
 
-#Evaluate the predictions - (Add your responses in the console), Choose-Regression,rmse
-lr.res = evaluate(lr.model,"Linear Regression",test,Predictions_test$actual)
-nn.res = evaluate(nn.model,"Neural Network",test,Predictions_test$actual)
-xgb.res = evaluate(xgb.model,"Gradient Boosting",test,Predictions_test$actual)
+# Evaluate the predictions - (Add your responses in the console), Choose-Regression,rmse
+lr.res = evaluate(lr.model, "Linear Regression", test, Predictions_test$actual)
+nn.res = evaluate(nn.model, "Neural Network", test, Predictions_test$actual)
+xgb.res = evaluate(xgb.model, "Gradient Boosting", test, Predictions_test$actual)
 
-#The random forest models might take a while, use smaller dataset
-# train = train[1:1000,]
-#rf.model = randomForest(Sales~.,train,ntree=500,mtry=12) 
-#rf.res = evaluate(rf.model,"Random Forest",test,Predictions_test$actual)
-
+# The random forest models might take a while, use smaller dataset train = train[1:1000,] rf.model =
+# randomForest(Sales~.,train,ntree=500,mtry=12) rf.res = evaluate(rf.model,'Random
+# Forest',test,Predictions_test$actual)
