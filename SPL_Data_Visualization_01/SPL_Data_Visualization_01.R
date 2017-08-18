@@ -93,7 +93,7 @@ ggplot(FullSet, aes(x = as.Date(NewDate), y = AvgVisitsPerStorePerMonth)) + geom
 ggsave("Average_Customers_per_Store_Per_Month.png")
 
 # Loading xgb model for further plotting
-xgb.model = readRDS("xgb")
+xgb.model = readRDS("xgb.RDS")
 
 # Calculating variable importance
 xgb.varImp = varImp(xgb.model, scale = TRUE)
