@@ -104,7 +104,7 @@ imp.var.xgb = c("Open", "CompetitionDistance", "Store", "Promo", "CompetitionSin
     "StoreType", "Assortment", "Promo2", "DayOfWeek", "StoreAssortmentMatch")
 for (var in imp.var.xgb) {
     message("Now calculating for variable ", var)
-    xgb.partialPlots[[var]] = do.call(partial, list(xgb, pred.var = var, type = "auto", plot = FALSE))
+    xgb.partialPlots[[var]] = do.call(partial, list(xgb.model, pred.var = var, type = "auto", plot = FALSE))
 }
 
 # Creating the partial dependence plots and saving as pdf
