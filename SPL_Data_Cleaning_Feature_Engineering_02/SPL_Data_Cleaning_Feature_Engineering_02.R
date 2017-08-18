@@ -4,7 +4,8 @@
 
 #################################################################### 
 # Set the working directory 
-if (!require("rstudioapi")) install.packages("rstudioapi"); library("rstudioapi")
+if (!require("rstudioapi")) install.packages("rstudioapi")
+library("rstudioapi")
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 # Function to load the packages
@@ -35,9 +36,9 @@ load.multiple.files = function(path, pattern) {
 }
 
 # Load all required packages
-list.of.packages = c("rpart", "lubridate", "outliers", "rpart.plot", "xgboost", "caret", "caretEnsemble", "randomForest", 
-    "e1071", "pROC", "tidyr", "klaR", "car", "devtools", "yamldebugger", "mlbench", "Hmisc", "ggvis", "relaimpo", 
-    "formatR", "data.table", "zoo", "ggplot2", "forecast", "reshape2", "pdp")
+list.of.packages = c("rpart", "lubridate", "outliers", "rpart.plot", "xgboost", "caret", "caretEnsemble", 
+    "randomForest", "e1071", "pROC", "tidyr", "klaR", "car", "devtools", "yamldebugger", "mlbench", "Hmisc", 
+    "ggvis", "relaimpo", "formatR", "data.table", "zoo", "ggplot2", "forecast", "reshape2", "pdp")
 
 sapply(list.of.packages, load.packages)
 
@@ -107,3 +108,4 @@ train[, unused.vars] = NULL
 
 # Save a full dataset for data exploration use
 saveRDS(train, "FullSet.RDS")
+
