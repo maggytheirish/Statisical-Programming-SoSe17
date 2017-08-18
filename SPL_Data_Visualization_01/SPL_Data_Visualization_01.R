@@ -3,8 +3,8 @@
                   ### Data Visualization ###
 
 #################################################################### 
-# Set the working directory 
-if (!require("rstudioapi")) install.packages("rstudioapi"); library("rstudioapi")
+if (!require("rstudioapi")) install.packages("rstudioapi")
+library("rstudioapi")
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 # Function to load the packages
@@ -19,9 +19,9 @@ load.packages = function(p) {
     
 }
 # Load all required packages
-list.of.packages = c("rpart", "lubridate", "outliers", "rpart.plot", "xgboost", "caret", "caretEnsemble", "randomForest", 
-    "e1071", "pROC", "tidyr", "klaR", "car", "devtools", "yamldebugger", "mlbench", "Hmisc", "ggvis", "relaimpo", 
-    "formatR", "data.table", "zoo", "ggplot2", "forecast", "reshape2", "pdp")
+list.of.packages = c("rpart", "lubridate", "outliers", "rpart.plot", "xgboost", "caret", "caretEnsemble", 
+    "randomForest", "e1071", "pROC", "tidyr", "klaR", "car", "devtools", "yamldebugger", "mlbench", "Hmisc", 
+    "ggvis", "relaimpo", "formatR", "data.table", "zoo", "ggplot2", "forecast", "reshape2", "pdp")
 sapply(list.of.packages, load.packages)
 
 # Loading the full dataset
@@ -38,18 +38,18 @@ FullSet = separate(FullSet, Date, into = c("Year", "Month", "Day"), sep = "-")
 features_avg = setNames(aggregate(FullSet$Sales, list(FullSet$Store), mean), c("Store", "AvgSalesPerStore"))
 features_avg$AvgVisitsPerStore = aggregate(FullSet$Customers, list(FullSet$Store), mean)[, 2]
 
-features_dow = setNames(aggregate(FullSet$Sales, list(FullSet$Store, FullSet$DayOfWeek), mean), c("Store", "DayOfWeek", 
-    "AvgSalesPerStorePerDayOfWeek"))
+features_dow = setNames(aggregate(FullSet$Sales, list(FullSet$Store, FullSet$DayOfWeek), mean), c("Store", 
+    "DayOfWeek", "AvgSalesPerStorePerDayOfWeek"))
 features_dow$AvgVisitsPerStorePerDayOfWeek = aggregate(FullSet$Customers, list(FullSet$Store, FullSet$DayOfWeek), 
     mean)[, 3]
 
 features_year = setNames(aggregate(FullSet$Sales, list(FullSet$Store, FullSet$Year), mean), c("Store", "Year", 
     "AvgSalesPerStorePerYear"))
-features_year$AvgVisitsPerStorePerYear = aggregate(FullSet$Customers, list(FullSet$Store, FullSet$Year), mean)[, 
-    3]
+features_year$AvgVisitsPerStorePerYear = aggregate(FullSet$Customers, list(FullSet$Store, FullSet$Year), 
+    mean)[, 3]
 
-features_mon = setNames(aggregate(FullSet$Sales, list(FullSet$Store, FullSet$Year, FullSet$Month), mean), c("Store", 
-    "Year", "Month", "AvgSalesPerStorePerMonth"))
+features_mon = setNames(aggregate(FullSet$Sales, list(FullSet$Store, FullSet$Year, FullSet$Month), mean), 
+    c("Store", "Year", "Month", "AvgSalesPerStorePerMonth"))
 features_mon$AvgVisitsPerStorePerMonth = aggregate(FullSet$Customers, list(FullSet$Store, FullSet$Year, FullSet$Month), 
     mean)[, 4]
 
@@ -95,8 +95,8 @@ ggsave("Average_Customers_per_Store_Per_Month.png")
 # Loading xgb model for further plotting
 xgb.model = readRDS("xgb")
 
-#Calculating variable importance
-xgb.varImp <- varImp(xgb.model, scale=TRUE)
+# Calculating variable importance
+xgb.varImp = varImp(xgb.model, scale = TRUE)
 
 # Calculating partial dependence
 xgb.partialPlots = list()  # empty result list
