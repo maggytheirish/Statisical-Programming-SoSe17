@@ -4,11 +4,13 @@
 
 ##################################################################### 
 # Set the working directory 
-if (!require("rstudioapi")) install.packages("rstudioapi"); library("rstudioapi")
+if (!require("rstudioapi")) install.packages("rstudioapi")
+library("rstudioapi")
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
-#Loading packages 
-if (!require("caret")) install.packages("caret"); library("caret")
+# Loading packages
+if (!require("caret")) install.packages("caret")
+library("caret")
 
 # Loading the dataset
 FullSet = readRDS("FullSet.RDS")
